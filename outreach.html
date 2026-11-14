@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Route Runner — Outreach Tool · internal</title>
+<meta name="description" content="Internal outreach tool — not public.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2C10 2 5 7 5 13c0 8 11 17 11 17s11-9 11-17c0-6-5-11-11-11z' fill='%23FF4B0A'/%3E%3Ccircle cx='16' cy='13' r='4.5' fill='%23FBFAF7'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,500..900&family=Archivo:wght@400;500;600;700&family=Azeret+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFAF7; --paper-2:#F3F1EC; --ink:#141412;
+  --ink-60:rgba(20,20,18,.6); --ink-40:rgba(20,20,18,.4); --ink-15:rgba(20,20,18,.15); --ink-07:rgba(20,20,18,.07);
+  --action:#FF4B0A; --action-ink:#D63A00; --ok:#1E7A3C;
+  --font-display:"Big Shoulders","Arial Narrow",sans-serif;
+  --font-ui:"Archivo",system-ui,sans-serif;
+  --font-mono:"Azeret Mono",ui-monospace,monospace;
+  --pad:clamp(16px,3vw,40px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--action);color:var(--paper)}
+:focus-visible{outline:2.5px solid var(--action);outline-offset:2px}
+
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:18px var(--pad) 0}
+.wordmark{font-family:var(--font-display);font-weight:900;font-size:30px;text-transform:uppercase}
+.wordmark span{color:var(--action)}
+.priv{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
+
+.wrap{max-width:1180px;margin:0 auto;padding:26px var(--pad) 80px}
+.statbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.stat{border:1.5px solid var(--ink);border-radius:12px;background:var(--paper);padding:10px 16px;min-width:110px}
+.stat b{font-family:var(--font-display);font-weight:800;font-size:26px;display:block;line-height:1}
+.stat small{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-60)}
+.stat.hot{background:var(--action);border-color:var(--action)}
+
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+@media (max-width:940px){.cols{grid-template-columns:1fr}}
+
+.panel{border:1.5px solid var(--ink);border-radius:16px;background:var(--paper);overflow:hidden}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1.5px solid var(--ink);background:var(--paper-2)}
+.panel-head h2{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.panel-body{padding:16px 18px}
+
+button{font-family:var(--font-ui);font-weight:700;cursor:pointer;border-radius:10px;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:9px 15px;font-size:13.5px;transition:transform .15s,background .15s,color .15s,box-shadow .15s}
+button:hover{background:var(--ink);color:var(--paper)}
+button.primary{background:var(--action);border-color:var(--action)}
+button.primary:hover{box-shadow:0 10px 26px rgba(255,75,10,.35);background:var(--action);color:var(--ink)}
+button.small{padding:6px 10px;font-size:12px;border-radius:8px}
+button:disabled{opacity:.45;cursor:not-allowed}
+#btn-clear:hover{color:var(--paper)}
+
+.addrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.addrow input,.addrow select{font-family:var(--font-ui);font-size:14px;padding:10px 12px;border:1.5px solid var(--ink-15);border-radius:10px;background:var(--paper-2);color:var(--ink)}
+.addrow input:focus,.addrow select:focus{outline:none;border-color:var(--action)}
+.addrow #inp{flex:2;min-width:170px}
+.addrow #biz{flex:1.4;min-width:150px}
+.addrow select{min-width:120px}
+
+.bulk{width:100%;min-height:90px;font-family:var(--font-mono);font-size:12.5px;padding:12px;border:1.5px solid var(--ink-15);border-radius:10px;background:var(--paper-2);color:var(--ink);resize:vertical}
+.bulk:focus{outline:none;border-color:var(--action)}
+.hint{font-family:var(--font-mono);font-size:11px;color:var(--ink-40);margin-top:6px;letter-spacing:.03em}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--ink-15);background:var(--paper-2)}
+.chk{width:17px;height:17px;accent-color:var(--action);cursor:pointer;flex:none}
+
+.list{max-height:52vh;overflow:auto}
+.lead{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--ink-15)}
+.lead:hover{background:var(--paper-2)}
+.lead .who{min-width:0}
+.lead .who b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lead .who span{font-family:var(--font-mono);font-size:11px;color:var(--ink-60)}
+.lead .cat{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--ink-15);border-radius:7px;padding:4px 8px;color:var(--ink-60);white-space:nowrap}
+.lead .state{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border-radius:7px;padding:5px 9px;border:1px solid var(--ink-15);cursor:pointer;background:var(--paper);color:var(--ink-60)}
+.lead .state.s0{background:var(--paper)}
+.lead .state.s1{background:var(--action);border-color:var(--action);color:var(--ink)}
+.lead .state.s2{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.lead .state.s3{background:var(--paper-2);border-color:var(--ink-15);color:var(--ink-40);text-decoration:line-through}
+.empty{padding:34px 18px;text-align:center;color:var(--ink-40);font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:var(--paper);font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;padding:12px 20px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;box-shadow:0 14px 40px rgba(20,20,18,.25)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.side .panel{margin-bottom:20px}
+.tpl{width:100%;min-height:230px;font-family:var(--font-mono);font-size:12.5px;line-height:1.65;padding:14px;border:1.5px solid var(--ink-15);border-radius:10px;background:var(--paper-2);color:var(--ink);resize:vertical}
+.tpl:focus{outline:none;border-color:var(--action)}
+.tplhint{font-family:var(--font-mono);font-size:11px;color:var(--action-ink);margin-top:8px;letter-spacing:.03em}
+.footnote{font-family:var(--font-mono);font-size:11px;color:var(--ink-60);margin-top:14px;line-height:1.8;letter-spacing:.03em}
+a{color:var(--action-ink)}
+</style>
+</head>
+<body>
+<div class="top">
+  <p class="wordmark">ROUTE <span>RUNNER</span></p>
+  <p class="priv">INTERNAL TOOL · NOT FOR THE PUBLIC SITE</p>
+</div>
+
+<div class="wrap">
+  <div class="statbar" aria-hidden="false">
+    <div class="stat hot"><b id="s-sel">0</b><small>selected</small></div>
+    <div class="stat"><b id="s-total">0</b><small>leads</small></div>
+    <div class="stat"><b id="s-sent">0</b><small>sent</small></div>
+    <div class="stat"><b id="s-rep">0</b><small>replied</small></div>
+  </div>
+
+  <div class="cols">
+    <section class="panel" aria-label="Lead list">
+      <div class="panel-head">
+        <h2>LEAD LIST — Winnipeg</h2>
+        <span style="display:flex;gap:8px">
+          <button class="small" id="btn-export">Export CSV</button>
+          <button class="small" id="btn-clear" style="border-color:var(--action-ink);color:var(--action-ink)">Clear all</button>
+        </span>
+      </div>
+      <div class="panel-body">
+        <div class="addrow">
+          <input id="inp" type="text" placeholder="email@business.ca" autocomplete="off">
+          <input id="biz" type="text" placeholder="Business name (optional)" autocomplete="off">
+          <select id="cat">
+            <option value="restaurant">Restaurant</option>
+            <option value="clinic">Clinic</option>
+            <option value="salon">Salon / barber</option>
+            <option value="gym">Gym</option>
+            <option value="auto">Auto shop</option>
+            <option value="retail">Retail</option>
+            <option value="other">Other</option>
+          </select>
+          <button class="primary" id="btn-add">+ Add</button>
+        </div>
+        <details>
+          <summary style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;color:var(--ink-60);margin-bottom:8px">Paste a batch (one per line)</summary>
+          <textarea class="bulk" id="bulk" placeholder="info@pizzahot.ca — Tony's Pizza&#10;contact@stvitaldental.ca — St. Vital Dental&#10;hello@wpggym.ca"></textarea>
+          <p class="hint">Format per line: email — business name · or just email. Pick category on the right, then "Import batch".</p>
+          <p style="margin-top:8px"><button class="small" id="btn-import">Import batch</button></p>
+        </details>
+      </div>
+      <div class="toolbar">
+        <label style="display:flex;gap:7px;align-items:center;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase"><input type="checkbox" class="chk" id="chk-all"> Select all</label>
+        <button class="small primary" id="btn-copy"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" style="vertical-align:-1px;margin-right:5px" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg>Copy selected</button>
+        <button class="small" id="btn-copy-all">Copy ALL</button>
+        <button class="small" id="btn-mark-sent">Mark selected → SENT</button>
+        <button class="small" id="btn-del">Delete selected</button>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <aside class="side">
+      <section class="panel">
+        <div class="panel-head"><h2>COLD EMAIL TEMPLATE</h2><button class="small primary" id="btn-copy-tpl">Copy template</button></div>
+        <div class="panel-body">
+          <textarea class="tpl" id="tpl" spellcheck="false"></textarea>
+          <p class="tplhint">Uses {business} — replace it (or BCC-select one business at a time). The template lives in your browser, edit freely.</p>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>LOOP NOTES</h2></div>
+        <div class="panel-body">
+          <p class="footnote">
+            CASL (Canada's anti-spam law) — keep this legal and clean:<br>
+            · Send from your real address with your real name ✓<br>
+            · Include your mailing area + a way to opt out ✓ (template has one)<br>
+            · One polite follow-up max, then leave them alone<br>
+            · Gmail caps you ~500 recipients/day — send in small batches, morning hours, personalize the first line per business<br>
+            · NEVER put 50+ people in "To" — use BCC or send one-by-one
+          </p>
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var LS = "routeRunner.v1";
+  var TPL_LS = "routeRunner.tpl";
+  var $ = function(s){ return document.querySelector(s); };
+
+  var DEFAULT_TPL =
+"Subject: Quick question about {business}\n" +
+"\n" +
+"Hi there,\n" +
+"\n" +
+"I'm Arslan — I'm 16, I live right here in Winnipeg, and I build software for local businesses.\n" +
+"\n" +
+"I've been to {business} and I noticed [ONE SPECIFIC THING — e.g. the online menu is hard to find / bookings are by phone only]. I fix exactly that kind of thing: websites that show up on Google, online booking with automatic reminders, and simple AI that answers your common questions so you're not stuck on the phone.\n" +
+"\n" +
+"I'm offering a free checkup — I come by, watch how your day runs, and give you a plain-English list of what's slowing you down. You keep the list no matter what. If nothing's worth fixing, you'll never hear from me again.\n" +
+"\n" +
+"Worth 20 minutes? Just reply to this email.\n" +
+"\n" +
+"— Arslan\n" +
+"arslansohail039@gmail.com\n" +
+"Winnipeg, MB · [your mailing address / area]\n" +
+"PS — Not interested? Reply \"no thanks\" and I won't email again.";
+
+  var state = load();
+  var tplEl = $("#tpl");
+  tplEl.value = localStorage.getItem(TPL_LS) || DEFAULT_TPL;
+  tplEl.addEventListener("input", function(){ localStorage.setItem(TPL_LS, tplEl.value); });
+
+  function load(){
+    try { var s = JSON.parse(localStorage.getItem(LS)); if (s && s.leads) return s; } catch(e){}
+    return { leads: [] }; /* id, email, biz, cat, state(0 new,1 sent,2 replied,3 dead), sel */
+  }
+  function save(){ localStorage.setItem(LS, JSON.stringify(state)); }
+
+  function esc(s){ var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+  function toast(msg){
+    var t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+  }
+
+  function render(){
+    var list = $("#list");
+    if (!state.leads.length){
+      list.innerHTML = '<p class="empty">No leads yet — add emails above or paste a batch.</p>';
+    } else {
+      list.innerHTML = state.leads.map(function(l, i){
+        var labels = ["NEW","SENT","REPLIED","PASS"];
+        return '<div class="lead" data-i="' + i + '">' +
+          '<input type="checkbox" class="chk rowchk" data-i="' + i + '"' + (l.sel ? " checked" : "") + ' aria-label="Select ' + esc(l.email) + '">' +
+          '<div class="who"><b>' + esc(l.biz || l.email) + '</b><span>' + esc(l.email) + '</span></div>' +
+          '<span class="cat">' + esc(l.cat) + '</span>' +
+          '<button class="state s' + l.state + '" data-state="' + i + '" title="Click to cycle status">' + labels[l.state] + '</button>' +
+        '</div>';
+      }).join("");
+    }
+    /* stats */
+    var total = state.leads.length;
+    var sel = state.leads.filter(function(l){ return l.sel; }).length;
+    var sent = state.leads.filter(function(l){ return l.state === 1 || l.state === 2; }).length;
+    var rep = state.leads.filter(function(l){ return l.state === 2; }).length;
+    $("#s-total").textContent = total;
+    $("#s-sel").textContent = sel;
+    $("#s-sent").textContent = sent;
+    $("#s-rep").textContent = rep;
+    save();
+  }
+
+  function parseLine(line){
+    line = line.trim(); if (!line) return null;
+    var m = line.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
+    if (!m) return null;
+    var email = m[0];
+    var biz = "";
+    var idx = line.indexOf(email);
+    var before = line.slice(0, idx).replace(/[\s—–\-:,·]+$/, "").trim();
+    var after = line.slice(idx + email.length).replace(/^[\s—–\-:,·]+/, "").trim();
+    if (before && before.length > 1 && !/^[^\w]+$/.test(before)) biz = before;
+    else if (after && after.length > 1) biz = after.replace(/[\s—–\-:,·]+$/, "");
+    return { email: email, biz: biz };
+  }
+
+  function addLead(email, biz, cat){
+    if (state.leads.some(function(l){ return l.email.toLowerCase() === email.toLowerCase(); })) return false;
+    state.leads.push({ id: Date.now() + Math.random(), email: email, biz: biz || "", cat: cat || "other", state: 0, sel: false });
+    return true;
+  }
+
+  /* events */
+  $("#btn-add").addEventListener("click", function(){
+    var r = parseLine($("#inp").value + ($("#biz").value ? " — " + $("#biz").value : ""));
+    if (!r){ toast("That doesn't look like an email"); return; }
+    var added = addLead(r.email, r.biz, $("#cat").value);
+    toast(added ? "Added ✓" : "Already on the list");
+    if (added){ $("#inp").value = ""; $("#biz").value = ""; }
+    render();
+  });
+  $("#inp").addEventListener("keydown", function(e){ if (e.key === "Enter") $("#btn-add").click(); });
+
+  $("#btn-import").addEventListener("click", function(){
+    var lines = $("#bulk").value.split(/\n+/), ok = 0, dup = 0;
+    lines.forEach(function(l){
+      var r = parseLine(l);
+      if (r){ addLead(r.email, r.biz, $("#cat").value) ? ok++ : dup++; }
+    });
+    toast("Imported " + ok + (dup ? " · " + dup + " duplicates skipped" : ""));
+    $("#bulk").value = "";
+    render();
+  });
+
+  $("#list").addEventListener("change", function(e){
+    if (e.target.classList.contains("rowchk")){
+      state.leads[+e.target.dataset.i].sel = e.target.checked;
+      render();
+    }
+  });
+  $("#chk-all").addEventListener("change", function(e){
+    var on = e.target.checked;
+    state.leads.forEach(function(l){ l.sel = on; });
+    render();
+  });
+  $("#list").addEventListener("click", function(e){
+    var b = e.target.closest("[data-state]");
+    if (b){
+      var l = state.leads[+b.dataset.state];
+      l.state = (l.state + 1) % 4;
+      render();
+    }
+  });
+
+  function selectedEmails(){
+    var sel = state.leads.filter(function(l){ return l.sel; });
+    if (!sel.length) sel = state.leads; /* fall through to all if none selected */
+    return sel;
+  }
+  function copyText(text, okMsg){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast(okMsg); }, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast(okMsg); } catch(e){ toast("Copy failed — select manually"); }
+      document.body.removeChild(ta);
+    }
+  }
+  $("#btn-copy").addEventListener("click", function(){
+    var sel = selectedEmails();
+    if (!sel.length){ toast("No leads to copy yet"); return; }
+    copyText(sel.map(function(l){ return l.email; }).join(",\n"), sel.length + " emails copied — paste into Gmail BCC ✓");
+  });
+  $("#btn-copy-all").addEventListener("click", function(){
+    if (!state.leads.length){ toast("No leads yet"); return; }
+    copyText(state.leads.map(function(l){ return l.email; }).join(",\n"), "All " + state.leads.length + " emails copied ✓");
+  });
+  $("#btn-copy-tpl").addEventListener("click", function(){
+    copyText(tplEl.value, "Template copied — paste into your email draft ✓");
+  });
+  $("#btn-mark-sent").addEventListener("click", function(){
+    var n = 0;
+    state.leads.forEach(function(l){ if (l.sel){ l.state = 1; n++; } });
+    toast(n ? n + " marked SENT ✓" : "Select leads first");
+    render();
+  });
+  $("#btn-del").addEventListener("click", function(){
+    var n = state.leads.filter(function(l){ return l.sel; }).length;
+    if (!n){ toast("Select leads first"); return; }
+    if (!confirm("Delete " + n + " selected lead(s)?")) return;
+    state.leads = state.leads.filter(function(l){ return !l.sel; });
+    toast(n + " deleted");
+    render();
+  });
+  $("#btn-clear").addEventListener("click", function(){
+    if (!confirm("Delete EVERYTHING on the list?")) return;
+    state.leads = [];
+    render();
+  });
+  $("#btn-export").addEventListener("click", function(){
+    if (!state.leads.length){ toast("No leads yet"); return; }
+    var rows = ["email,business,category,status"];
+    var labels = ["new","sent","replied","pass"];
+    state.leads.forEach(function(l){
+      rows.push([l.email, '"' + (l.biz || "").replace(/"/g, '""') + '"', l.cat, labels[l.state]].join(","));
+    });
+    var blob = new Blob([rows.join("\n")], { type: "text/csv" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "winnipeg-leads.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast("CSV downloaded ✓");
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

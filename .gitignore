@@ -1,0 +1,7 @@
+# dev-only design artifacts
+.impeccable/
+.impeccable-brief-index.md
+
+# os / editor
+Thumbs.db
+.DS_Store

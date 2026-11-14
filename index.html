@@ -1,0 +1,989 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Arslan — The Tech Guy for Winnipeg Businesses · Free Tech Checkup</title>
+<meta name="description" content="Arslan is a 16-year-old builder from Winnipeg who visits local businesses, sees how you actually work, and makes the tech parts run themselves. AI, automation, websites. First visit is free.">
+<meta property="og:title" content="Arslan — the tech guy who comes to you">
+<meta property="og:description" content="Winnipeg businesses: I visit, I look at how you work, I make the boring tech parts run themselves. First visit free.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#FBFAF7">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2C10 2 5 7 5 13c0 8 11 17 11 17s11-9 11-17c0-6-5-11-11-11z' fill='%23FF4B0A'/%3E%3Ccircle cx='16' cy='13' r='4.5' fill='%23FBFAF7'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,500..900&family=Archivo:wght@400;500;600;700&family=Azeret+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Arslan Sohail",
+  "email": "mailto:arslansohail039@gmail.com",
+  "jobTitle": "Tech & AI helper for local businesses",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Winnipeg",
+    "addressRegion": "MB",
+    "addressCountry": "CA"
+  },
+  "knowsAbout": ["AI automation", "small business websites", "business process automation"],
+  "makesOffer": {
+    "@type": "Offer",
+    "name": "Free tech checkup for local businesses",
+    "price": "0",
+    "priceCurrency": "CAD"
+  }
+}
+</script>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --paper:#FBFAF7;
+  --paper-2:#F3F1EC;
+  --ink:#141412;
+  --ink-60:rgba(20,20,18,.6);
+  --ink-40:rgba(20,20,18,.4);
+  --ink-15:rgba(20,20,18,.15);
+  --ink-07:rgba(20,20,18,.07);
+  --action:#FF4B0A;
+  --action-ink:#D63A00;
+  --route-dash:10 12;
+  --font-display:"Big Shoulders", "Arial Narrow", sans-serif;
+  --font-ui:"Archivo", system-ui, sans-serif;
+  --font-mono:"Azeret Mono", ui-monospace, monospace;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --pad:clamp(20px,5vw,72px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-ui);
+  font-size:clamp(15px,1.05vw + 9px,18px);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--action);color:var(--paper)}
+:focus-visible{outline:2.5px solid var(--action);outline-offset:3px;border-radius:2px}
+a{color:inherit}
+
+/* ============ PAPER MAP GROUND ============ */
+.map-ground{position:fixed;inset:0;pointer-events:none;z-index:0}
+.map-ground svg{width:100%;height:100%}
+
+/* ============ THE ROUTE LAYER (signature) ============ */
+#route-layer{position:absolute;top:0;left:0;width:100%;height:0;z-index:1;pointer-events:none;overflow:visible}
+#route-layer svg{position:absolute;top:0;left:0;width:100%}
+#route-path{
+  fill:none;stroke:var(--ink);stroke-width:2.5;
+  stroke-dasharray:var(--route-dash);stroke-linecap:round;
+}
+#route-ghost{
+  fill:none;stroke:var(--ink-15);stroke-width:2.5;
+  stroke-dasharray:var(--route-dash);stroke-linecap:round;
+}
+
+/* ============ HUD READOUT ============ */
+#hud{
+  position:fixed;left:clamp(12px,2vw,28px);bottom:clamp(12px,2vw,24px);z-index:50;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;
+  background:var(--ink);color:var(--paper);
+  padding:9px 13px;border-radius:10px;
+  display:flex;gap:10px;align-items:center;
+  box-shadow:0 10px 30px rgba(20,20,18,.18);
+  text-transform:uppercase;white-space:nowrap;
+}
+#hud .km{color:#FFB38A;font-weight:700;min-width:5.5ch}
+#hud .dot{width:7px;height:7px;border-radius:50%;background:var(--action)}
+@media (max-width:560px){#hud{font-size:10px;padding:7px 10px}}
+
+/* ============ HEADER ============ */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px var(--pad);
+  background:linear-gradient(to bottom, var(--paper) 55%, transparent);
+}
+.wordmark{font-family:var(--font-display);font-weight:900;font-size:26px;letter-spacing:.01em;text-decoration:none;display:flex;align-items:baseline;gap:8px}
+.wordmark small{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--ink-60);font-weight:500}
+nav{display:flex;gap:4px}
+nav a{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;padding:8px 11px;border-radius:9px;color:var(--ink-60);
+  transition:color .2s, background .2s;
+}
+nav a:hover{color:var(--ink);background:var(--ink-07)}
+nav a.cta-mini{background:var(--action);color:var(--ink);font-weight:700}
+nav a.cta-mini:hover{background:var(--ink);color:var(--paper)}
+@media (max-width:860px){nav a:not(.cta-mini){display:none}}
+
+/* ============ HERO ============ */
+.hero{
+  min-height:100svh;position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:110px var(--pad) 0;
+  overflow:hidden;
+}
+.hero-beats{position:relative;z-index:3}
+.beat{
+  font-family:var(--font-display);font-weight:900;
+  font-size:clamp(3.2rem, 11vw, 6.4rem);
+  line-height:.92;letter-spacing:.005em;text-transform:uppercase;
+  display:block;width:fit-content;
+}
+.beat:nth-child(2){margin-left:clamp(0px,6vw,90px)}
+.beat:nth-child(3){color:var(--action);margin-left:clamp(0px,12vw,180px)}
+.beat-reveal{opacity:0;transform:translateY(24px)}
+.loaded .beat-reveal{animation:beatIn .55s var(--ease-out) forwards}
+@keyframes beatIn{to{opacity:1;transform:none}}
+.jitter-line{position:relative;display:inline-block}
+.jitter-line::after{
+  content:"";position:absolute;left:0;right:0;bottom:.05em;height:.045em;
+  background:var(--ink);opacity:0;
+}
+.loaded .jitter-line::after{animation:jit 2.2s steps(2) infinite .9s}
+@keyframes jit{
+  0%{opacity:1;transform:translateX(0) scaleX(1)}
+  25%{opacity:1;transform:translateX(1.5px) scaleX(.985)}
+  50%{opacity:0;transform:translateX(-1px)}
+  75%{opacity:1;transform:translateX(.5px)}
+  100%{opacity:0}
+}
+.hero-sub{
+  max-width:34em;margin-top:26px;font-size:clamp(15.5px,1.1vw + 8px,19px);
+  color:var(--ink-60);position:relative;z-index:3;
+}
+.hero-sub strong{color:var(--ink)}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px;position:relative;z-index:3}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-ui);font-weight:700;font-size:15.5px;
+  padding:16px 26px;border-radius:14px;text-decoration:none;
+  border:1.5px solid var(--ink);cursor:pointer;
+  transition:transform .18s var(--ease-out), background .18s, color .18s, box-shadow .18s;
+  will-change:transform;
+}
+.btn svg{width:15px;height:15px;transition:transform .25s var(--ease-out)}
+.btn-primary{background:var(--action);border-color:var(--action);color:var(--ink)}
+.btn-primary:hover{box-shadow:0 14px 34px rgba(255,75,10,.35)}
+.btn-primary:hover svg{transform:translateY(3px)}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--paper)}
+/* hero map strip */
+.hero-map{
+  position:relative;z-index:2;margin-top:clamp(30px,5vh,54px);
+  border:1.5px solid var(--ink);border-radius:18px 18px 0 0;
+  background:
+    linear-gradient(var(--ink-07) 1px, transparent 1px) 0 0/ 44px 44px,
+    linear-gradient(90deg, var(--ink-07) 1px, transparent 1px) 0 0/ 44px 44px,
+    var(--paper-2);
+  height:clamp(170px,24vh,230px);
+  overflow:hidden;
+}
+.hero-map svg{position:absolute;inset:0;width:100%;height:100%}
+.hero-pin{position:absolute;transform:translate(-50%,-100%)}
+.pin{display:flex;flex-direction:column;align-items:center;gap:4px}
+.pin .tag{
+  font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+  background:var(--ink);color:var(--paper);padding:4px 8px;border-radius:6px;white-space:nowrap;
+}
+.pin .tag.you{background:var(--action);color:var(--ink)}
+.pin .head{width:22px;height:22px}
+.pin .head .body{transform-origin:50% 100%}
+.pin-drop .head .body{animation:pinDrop .5s var(--ease-out) both}
+@keyframes pinDrop{
+  0%{transform:translateY(-18px);opacity:0}
+  60%{transform:translateY(2px);opacity:1}
+  100%{transform:translateY(0)}
+}
+.hero-km{
+  position:absolute;right:14px;top:12px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--ink-60);
+}
+.hero-km b{color:var(--action-ink)}
+
+/* ============ MARQUEE ============ */
+.marquee-band{
+  position:relative;z-index:2;
+  border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);
+  background:var(--paper);overflow:hidden;padding:0;
+}
+.marquee{display:flex;width:max-content;animation:slide 26s linear infinite}
+.marquee.rev{animation-direction:reverse;animation-duration:34s}
+.marquee-band:hover .marquee{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-50%)}}
+.marquee-item{
+  font-family:var(--font-display);font-weight:800;font-size:clamp(26px,3.4vw,42px);
+  text-transform:uppercase;padding:14px 22px 16px;display:flex;align-items:center;gap:22px;
+  white-space:nowrap;
+}
+.marquee-item svg{width:13px;height:13px;fill:var(--action);flex:none}
+
+/* ============ STOPS (sections) ============ */
+main{position:relative;z-index:2}
+.stop{padding:clamp(90px,13vh,150px) var(--pad) clamp(70px,10vh,120px);position:relative}
+.stop-head{display:flex;align-items:center;gap:16px;margin-bottom:clamp(34px,5vh,56px)}
+.stop-plaque{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.16em;
+  border:1.5px solid var(--ink);border-radius:10px;padding:8px 12px;
+  background:var(--paper);white-space:nowrap;
+}
+.stop-plaque svg{width:11px;height:11px}
+.stop-km{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--ink-40)}
+.display{
+  font-family:var(--font-display);font-weight:900;text-transform:uppercase;
+  font-size:clamp(2.6rem,6.4vw,4.6rem);line-height:.96;letter-spacing:.005em;
+  max-width:12em;
+}
+.display em{font-style:normal;color:var(--action)}
+.lede{max-width:62ch;color:var(--ink-60);margin-top:22px;font-size:clamp(15.5px,1.1vw + 8px,18.5px)}
+.lede strong{color:var(--ink)}
+
+/* reveal system */
+.rv{opacity:0;transform:translateY(28px)}
+.rv.in{opacity:1;transform:none;transition:opacity .7s var(--ease-out), transform .7s var(--ease-out)}
+
+/* STOP 1 — WHO */
+.who-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:clamp(30px,5vw,70px);align-items:start}
+@media (max-width:900px){.who-grid{grid-template-columns:1fr}}
+.fact-card{
+  border:1.5px solid var(--ink);border-radius:16px;background:var(--paper);
+  padding:clamp(22px,3vw,34px);
+  box-shadow:0 18px 44px rgba(20,20,18,.10);
+}
+.fact-card h3{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--ink-60);text-transform:uppercase;margin-bottom:16px}
+.fact-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:13px 4px;border-top:1px solid var(--ink-15)}
+.fact-row:first-of-type{border-top:none;padding-top:0}
+.fact-row dt{font-size:14.5px;color:var(--ink-60)}
+.fact-row dd{font-family:var(--font-display);font-weight:800;font-size:26px;text-transform:uppercase;text-align:right}
+.fact-row dd em{font-style:normal;color:var(--action)}
+.signature{
+  margin-top:22px;font-family:var(--font-display);font-weight:900;font-size:34px;
+  text-transform:uppercase;letter-spacing:.01em;
+}
+.signature span{color:var(--action)}
+
+/* STOP 2 — WHAT I FIX (work order) */
+.workorder{border:1.5px solid var(--ink);border-radius:18px;overflow:hidden;background:var(--paper);box-shadow:0 18px 44px rgba(20,20,18,.10)}
+.wo-row{
+  display:grid;grid-template-columns:44px minmax(0,.62fr) minmax(0,1fr) auto;
+  gap:clamp(12px,2vw,26px);align-items:center;
+  padding:clamp(18px,2.4vw,26px) clamp(18px,2.6vw,30px);
+  border-top:1px solid var(--ink-15);
+  transition:background .2s;
+}
+.wo-row:first-child{border-top:none}
+.wo-row:hover{background:var(--paper-2)}
+.wo-check{width:26px;height:26px;border:1.5px solid var(--action);border-radius:8px;display:grid;place-items:center;background:var(--paper)}
+.wo-check svg{width:14px;height:14px;opacity:0;transform:scale(.5);transition:opacity .25s, transform .25s var(--ease-out)}
+.wo-row:hover .wo-check svg,.wo-row.inview .wo-check svg{opacity:1;transform:scale(1)}
+.wo-name{font-family:var(--font-display);font-weight:800;font-size:clamp(21px,2.3vw,30px);text-transform:uppercase;line-height:1}
+.wo-desc{color:var(--ink-60);font-size:14.5px;max-width:44ch}
+.wo-tag{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.12em;white-space:nowrap;padding:6px 10px;border-radius:8px;border:1px solid var(--ink-40);color:var(--ink-60)}
+.wo-tag.free{background:var(--action);border-color:var(--action);color:var(--ink)}
+@media (max-width:760px){
+  .wo-row{grid-template-columns:34px 1fr auto}
+  .wo-desc{grid-column:2/4;grid-row:2}
+}
+
+/* STOP 3 — THE VISIT */
+.visit-steps{margin-top:10px}
+.vstep{
+  display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,3vw,34px);
+  padding:clamp(26px,4vh,40px) 6px;border-top:1px solid var(--ink-15);align-items:start;
+}
+.vstep-num{
+  font-family:var(--font-display);font-weight:900;font-size:clamp(44px,6vw,84px);line-height:.8;
+  color:var(--ink-15);
+  transition:color .4s;
+}
+.vstep:hover .vstep-num{color:var(--action)}
+.vstep h3{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,2.8vw,38px);text-transform:uppercase;line-height:1.02}
+.vstep p{color:var(--ink-60);margin-top:10px;max-width:56ch;font-size:15.5px}
+.vstep .vmono{font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;color:var(--ink-40);margin-top:12px;display:block}
+
+/* STOP 4 — BUILT */
+.built-list{border-top:1.5px solid var(--ink)}
+.built-row{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 20px;
+  padding:clamp(18px,2.6vh,26px) 6px;border-bottom:1.5px solid var(--ink);
+  text-decoration:none;align-items:center;position:relative;
+  transition:padding .25s var(--ease-out);
+}
+.built-row:hover{padding-left:20px}
+.built-row::before{
+  content:"";position:absolute;left:0;top:50%;width:8px;height:8px;border-radius:50%;
+  background:var(--action);transform:translate(-18px,-50%);opacity:0;transition:opacity .25s, transform .25s var(--ease-out);
+}
+.built-row:hover::before{opacity:1;transform:translate(-4px,-50%)}
+.built-name{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,3.4vw,44px);text-transform:uppercase;line-height:1;grid-column:1;grid-row:1}
+.built-desc{grid-column:1;grid-row:2;color:var(--ink-60);font-size:14px;max-width:56ch}
+.built-arrow{grid-column:2;grid-row:1/3;align-self:center}
+.built-arrow svg{width:22px;height:22px;transition:transform .25s var(--ease-out)}
+.built-row:hover .built-arrow svg{transform:translate(4px,-4px)}
+.built-row .ext{grid-column:2;grid-row:2;font-family:var(--font-mono);font-size:11px;color:var(--ink-40);letter-spacing:.05em;text-align:right}
+
+/* ============ FINAL STOP — THE DOOR ============ */
+.door{
+  padding:clamp(90px,13vh,150px) var(--pad) 40px;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+  gap:clamp(30px,5vw,80px);align-items:start;
+}
+@media (max-width:940px){.door{grid-template-columns:1fr}}
+.form-card{
+  border:1.5px solid var(--ink);border-radius:18px;background:var(--paper);
+  padding:clamp(22px,3vw,36px);
+  box-shadow:0 18px 44px rgba(20,20,18,.12);
+  position:relative;
+}
+.form-card::before{
+  content:"LAST STOP";position:absolute;top:-13px;left:26px;
+  font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.2em;
+  background:var(--ink);color:var(--paper);padding:6px 12px;border-radius:8px;
+}
+.field{margin-bottom:16px}
+.field label{
+  display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;
+  color:var(--ink-60);margin-bottom:7px;font-weight:500;
+}
+.field input,.field textarea{
+  width:100%;font-family:var(--font-ui);font-size:15.5px;color:var(--ink);
+  background:var(--paper-2);border:1.5px solid transparent;border-radius:12px;
+  padding:14px 16px;transition:border .2s, background .2s;
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-40)}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--action);background:#fff}
+.field textarea{min-height:110px;resize:vertical}
+.field-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.field-2{grid-template-columns:1fr}}
+.form-status{font-size:14px;margin-top:14px;display:none;border-radius:10px;padding:12px 14px}
+.form-status.err{display:block;background:rgba(255,75,10,.09);color:var(--action-ink)}
+.form-status.ok{display:block;background:rgba(20,20,18,.05);color:var(--ink)}
+.hp{position:absolute;left:-5000px;opacity:0;height:0;overflow:hidden}
+.booked{display:none;text-align:center;padding:26px 6px}
+.booked.show{display:block}
+.booked .stamp{
+  display:inline-block;font-family:var(--font-display);font-weight:900;font-size:44px;
+  text-transform:uppercase;color:var(--action);transform:rotate(-4deg);
+  border:3px solid var(--action);border-radius:12px;padding:8px 22px;
+}
+.booked p{margin-top:18px;color:var(--ink-60)}
+.booked p strong{color:var(--ink)}
+
+/* ============ FOOTER ============ */
+footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34px var(--pad) 90px;background:var(--paper)}
+.foot-grid{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.foot-big{font-family:var(--font-display);font-weight:900;font-size:clamp(30px,4.5vw,54px);text-transform:uppercase;line-height:.95}
+.foot-big span{color:var(--action)}
+.foot-mono{font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;color:var(--ink-60);line-height:1.9}
+.foot-mono a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.legend{display:flex;gap:16px;align-items:center;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--ink-60);text-transform:uppercase;margin-top:18px;flex-wrap:wrap}
+.legend svg{width:26px;height:12px}
+
+/* ============ CUSTOM CURSOR (desktop) ============ */
+@media (pointer:fine){
+  .cursor-dot{position:fixed;z-index:100;width:9px;height:9px;border-radius:50%;background:var(--action);pointer-events:none;transform:translate(-50%,-50%);transition:opacity .2s}
+  .cursor-ring{position:fixed;z-index:100;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--ink-40);pointer-events:none;transform:translate(-50%,-50%);transition:width .25s var(--ease-out),height .25s var(--ease-out),opacity .2s,border-color .2s}
+  body.cursor-hover .cursor-ring{width:52px;height:52px;border-color:var(--action)}
+}
+@media (pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none}
+  #route-path{stroke-dashoffset:0 !important}
+  .marquee{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- PAPER MAP GROUND -->
+<div class="map-ground" aria-hidden="true">
+  <svg id="ground-svg" preserveAspectRatio="none">
+    <defs>
+      <pattern id="streets" width="46" height="46" patternUnits="userSpaceOnUse">
+        <path d="M0 0H46M0 0V46" stroke="rgba(20,20,18,.05)" stroke-width="1" fill="none"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#streets)"/>
+  </svg>
+</div>
+
+<!-- THE ROUTE (signature interaction) -->
+<div id="route-layer" aria-hidden="true">
+  <svg id="route-svg">
+    <path id="route-ghost" d=""/>
+    <path id="route-path" d=""/>
+  </svg>
+</div>
+
+<!-- HUD READOUT -->
+<div id="hud" role="status" aria-live="off">
+  <span class="dot"></span>
+  <span class="km" id="hud-km">KM 0.0</span>
+  <span id="hud-next">NEXT STOP — START</span>
+</div>
+
+<header>
+  <a class="wordmark" href="#top">ARSLAN <small>WINNIPEG · MB</small></a>
+  <nav aria-label="Main">
+    <a href="#who">Who</a>
+    <a href="#fix">What I fix</a>
+    <a href="#visit">The visit</a>
+    <a href="#built">Built</a>
+    <a class="cta-mini" href="#door">Free checkup</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-label="Introduction">
+    <div class="hero-beats" aria-hidden="false">
+      <span class="beat beat-reveal" style="animation-delay:.1s">YOUR BUSINESS.</span>
+      <span class="beat beat-reveal" style="animation-delay:.35s"><span class="jitter-line">HAS A TECH GUY.</span></span>
+      <span class="beat beat-reveal" style="animation-delay:.6s">HE COMES TO YOU.</span>
+    </div>
+    <p class="hero-sub beat-reveal" style="animation-delay:.85s">
+      I'm <strong>Arslan</strong> — 16, from Winnipeg. I visit local shops, restaurants and clinics,
+      watch how you actually work, and make the boring tech parts run themselves.
+      <strong>The first visit is free.</strong>
+    </p>
+    <div class="hero-ctas beat-reveal" style="animation-delay:1s">
+      <a class="btn btn-primary magnetic" href="#door">
+        Book a FREE tech checkup
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg>
+      </a>
+      <a class="btn btn-ghost magnetic" href="#fix">See what I fix</a>
+    </div>
+
+    <div class="hero-map" aria-hidden="true">
+      <span class="hero-km">ROUTE ARSLAN → YOU · <b id="hero-km">6.4 KM</b></span>
+      <svg viewBox="0 0 800 220" preserveAspectRatio="xMidYMid slice">
+        <path id="hero-route" d="M 60 168 C 190 168 190 64 320 64 S 520 150 640 118 S 740 96 760 88"
+              fill="none" stroke="#141412" stroke-width="3" stroke-dasharray="10 12" stroke-linecap="round"/>
+        <circle id="hero-dash-dot" r="5" fill="#FF4B0A"/>
+      </svg>
+      <div class="hero-pin pin-drop" style="left:10%;top:58%">
+        <div class="pin">
+          <span class="tag">ARSLAN</span>
+          <svg class="head" viewBox="0 0 24 24" aria-hidden="true"><g class="body"><path d="M12 2C7.5 2 4 5.5 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.5-3.5-8-8-8z" fill="#141412"/><circle cx="12" cy="10" r="3.2" fill="#FBFAF7"/></g></svg>
+        </div>
+      </div>
+      <div class="hero-pin pin-drop" style="left:89%;top:32%;animation-delay:.5s">
+        <div class="pin">
+          <span class="tag you">YOU?</span>
+          <svg class="head" viewBox="0 0 24 24" aria-hidden="true"><g class="body"><path d="M12 2C7.5 2 4 5.5 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.5-3.5-8-8-8z" fill="#FF4B0A"/><circle cx="12" cy="10" r="3.2" fill="#FBFAF7"/></g></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MARQUEE ================= -->
+  <div class="marquee-band" aria-hidden="true">
+    <div class="marquee" id="mq1"></div>
+    <div class="marquee rev" id="mq2" style="border-top:1px solid var(--ink-15)"></div>
+  </div>
+
+  <!-- ================= STOP 1 — WHO ================= -->
+  <section class="stop" id="who" data-hud="WHO IS THIS KID" aria-label="Who I am">
+    <div class="stop-head rv">
+      <span class="stop-plaque">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7.5 2 4 5.5 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.5-3.5-8-8-8z" fill="#141412"/><circle cx="12" cy="10" r="3.2" fill="#FBFAF7"/></svg>
+        STOP 1 · WHO
+      </span>
+      <span class="stop-km">KM 1.2</span>
+    </div>
+    <div class="who-grid">
+      <div>
+        <h2 class="display rv">Hey — I'm the kid who fixes the <em>tech</em> so you can run the business.</h2>
+        <p class="lede rv">
+          I'm Arslan. I'm 16, I live in Winnipeg, and I've been building software since I was 12:
+          <strong>over 10 finished projects</strong>, from AI tools to full websites.
+          Now I bring that to the businesses on my street. You know the ones: the Wi-Fi drops,
+          the bookings live on paper, and nobody has time for "digital transformation."
+        </p>
+        <p class="lede rv">
+          I don't talk jargon. I come to <strong>your</strong> place, watch how your day actually runs,
+          and tell you plainly what's slowing you down, and what it would take to fix it.
+        </p>
+      </div>
+      <dl class="fact-card rv">
+        <h3>Route manifest · ARSLAN</h3>
+        <div class="fact-row"><dt>Base</dt><dd>Winnipeg, MB</dd></div>
+        <div class="fact-row"><dt>Age</dt><dd>16 <em>&amp; shipping</em></dd></div>
+        <div class="fact-row"><dt>Projects built</dt><dd>10+</dd></div>
+        <div class="fact-row"><dt>Speaks</dt><dd>Human, not jargon</dd></div>
+        <div class="fact-row"><dt>First visit</dt><dd><em>FREE</em></dd></div>
+        <p class="signature">ARSLAN <span>SOHAIL</span></p>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================= STOP 2 — WHAT I FIX ================= -->
+  <section class="stop" id="fix" data-hud="WHAT I FIX" aria-label="Services">
+    <div class="stop-head rv">
+      <span class="stop-plaque">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7.5 2 4 5.5 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.5-3.5-8-8-8z" fill="#141412"/><circle cx="12" cy="10" r="3.2" fill="#FBFAF7"/></svg>
+        STOP 2 · WHAT I FIX
+      </span>
+      <span class="stop-km">KM 3.5</span>
+    </div>
+    <h2 class="display rv">Things on the <em>work order.</em></h2>
+    <p class="lede rv">Every business is different, but these are the jobs I get called for.</p>
+
+    <div class="workorder rv" style="margin-top:clamp(30px,4vh,48px)">
+      <div class="wo-row" data-check>
+        <span class="wo-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#FF4B0A" stroke-width="2.5"><path d="M2.5 8.5l3.5 3.5 7-8"/></svg></span>
+        <span class="wo-name">Free tech checkup</span>
+        <span class="wo-desc">I visit, watch how you work, and give you a plain-English list of what's slowing you down. You keep the list even if we never work together.</span>
+        <span class="wo-tag free">FREE</span>
+      </div>
+      <div class="wo-row" data-check>
+        <span class="wo-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#FF4B0A" stroke-width="2.5"><path d="M2.5 8.5l3.5 3.5 7-8"/></svg></span>
+        <span class="wo-name">AI that does the boring stuff</span>
+        <span class="wo-desc">Answers to common customer questions, written replies, schedules, summaries. AI handles it, you approve it. If it doesn't save you time, you don't need it.</span>
+        <span class="wo-tag">AI</span>
+      </div>
+      <div class="wo-row" data-check>
+        <span class="wo-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#FF4B0A" stroke-width="2.5"><path d="M2.5 8.5l3.5 3.5 7-8"/></svg></span>
+        <span class="wo-name">Bookings, reminders &amp; payments</span>
+        <span class="wo-desc">Online booking that syncs with your phone, automatic appointment reminders, simple ways to get paid. Fewer no-shows, fewer phone tag mornings.</span>
+        <span class="wo-tag">AUTOMATION</span>
+      </div>
+      <div class="wo-row" data-check>
+        <span class="wo-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#FF4B0A" stroke-width="2.5"><path d="M2.5 8.5l3.5 3.5 7-8"/></svg></span>
+        <span class="wo-name">Website + Google presence</span>
+        <span class="wo-desc">A clean site that loads fast on a phone, shows up when people search your neighborhood, and makes your hours and menu easy to find.</span>
+        <span class="wo-tag">WEB</span>
+      </div>
+      <div class="wo-row" data-check>
+        <span class="wo-check" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="#FF4B0A" stroke-width="2.5"><path d="M2.5 8.5l3.5 3.5 7-8"/></svg></span>
+        <span class="wo-name">The daily annoyances</span>
+        <span class="wo-desc">Wi-Fi that drops, printers that hate you, passwords nobody remembers, staff email chaos. Small fixes, big daily relief.</span>
+        <span class="wo-tag">FIXES</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STOP 3 — THE VISIT ================= -->
+  <section class="stop" id="visit" data-hud="HOW THE VISIT WORKS" aria-label="How it works">
+    <div class="stop-head rv">
+      <span class="stop-plaque">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7.5 2 4 5.5 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.5-3.5-8-8-8z" fill="#141412"/><circle cx="12" cy="10" r="3.2" fill="#FBFAF7"/></svg>
+        STOP 3 · THE VISIT
+      </span>
+      <span class="stop-km">KM 5.8</span>
+    </div>
+    <h2 class="display rv">How a visit <em>actually</em> goes.</h2>
+    <div class="visit-steps">
+      <div class="vstep rv">
+        <span class="vstep-num" aria-hidden="true">1</span>
+        <div>
+          <h3>I come to you.</h3>
+          <p>Your shop, your café, your clinic, wherever the work happens. Coffee's on you if you insist, but it's not required.</p>
+          <span class="vmono">About 30 minutes, free, no strings</span>
+        </div>
+      </div>
+      <div class="vstep rv">
+        <span class="vstep-num" aria-hidden="true">2</span>
+        <div>
+          <h3>I watch how you work.</h3>
+          <p>Not a sales pitch. I look at your day: where time leaks, what gets written down twice, what annoys you every single morning.</p>
+          <span class="vmono">I take notes, you keep running things</span>
+        </div>
+      </div>
+      <div class="vstep rv">
+        <span class="vstep-num" aria-hidden="true">3</span>
+        <div>
+          <h3>You get a plain-English plan.</h3>
+          <p>A short list: what's fixable, what it costs, what it saves you. No jargon, no 40-page report. If a fix isn't worth it, I'll tell you that too.</p>
+          <span class="vmono">Yours to keep, even if you hire nobody</span>
+        </div>
+      </div>
+      <div class="vstep rv">
+        <span class="vstep-num" aria-hidden="true">4</span>
+        <div>
+          <h3>You decide what's worth it.</h3>
+          <p>Pick one fix or none. If you pick one, I build it and I stay reachable after. I'm local, that's the whole point.</p>
+          <span class="vmono">Small jobs, fair prices, no lock-in</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STOP 4 — BUILT ================= -->
+  <section class="stop" id="built" data-hud="THINGS I'VE BUILT" aria-label="Projects">
+    <div class="stop-head rv">
+      <span class="stop-plaque">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7.5 2 4 5.5 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.5-3.5-8-8-8z" fill="#141412"/><circle cx="12" cy="10" r="3.2" fill="#FBFAF7"/></svg>
+        STOP 4 · PROOF
+      </span>
+      <span class="stop-km">KM 7.1</span>
+    </div>
+    <h2 class="display rv">Things I've <em>built.</em></h2>
+    <p class="lede rv">All live. All made by one 16-year-old with too many ideas. Click any of them.</p>
+    <div class="built-list rv" style="margin-top:clamp(28px,4vh,44px)">
+      <a class="built-row" href="https://nextagent.site" target="_blank" rel="noopener">
+        <span class="built-name">NextAgent</span>
+        <span class="built-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M9 6h9v9"/></svg></span>
+        <span class="built-desc">My AI agency — the bigger operation this all feeds into.</span>
+        <span class="ext">nextagent.site</span>
+      </a>
+      <a class="built-row" href="https://onlyyes.life" target="_blank" rel="noopener">
+        <span class="built-name">OnlyYes</span>
+        <span class="built-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M9 6h9v9"/></svg></span>
+        <span class="built-desc">A full product with an AI dashboard — built, shipped, SEO'd.</span>
+        <span class="ext">onlyyes.life</span>
+      </a>
+      <a class="built-row" href="https://linguaboss.vercel.app" target="_blank" rel="noopener">
+        <span class="built-name">LinguaBoss</span>
+        <span class="built-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M9 6h9v9"/></svg></span>
+        <span class="built-desc">Roman-Urdu AI translator — because my family needed it.</span>
+        <span class="ext">linguaboss.vercel.app</span>
+      </a>
+      <a class="built-row" href="https://arslanaii.vercel.app" target="_blank" rel="noopener">
+        <span class="built-name">ArslanAI</span>
+        <span class="built-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M9 6h9v9"/></svg></span>
+        <span class="built-desc">An AI that posts for me — runs itself for hours at a time.</span>
+        <span class="ext">arslanaii.vercel.app</span>
+      </a>
+      <a class="built-row" href="https://vizoraai.vercel.app" target="_blank" rel="noopener">
+        <span class="built-name">VizoraAI</span>
+        <span class="built-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M9 6h9v9"/></svg></span>
+        <span class="built-desc">Another full AI product — shipped and documented.</span>
+        <span class="ext">vizoraai.vercel.app</span>
+      </a>
+      <a class="built-row" href="https://arslanpro.vercel.app" target="_blank" rel="noopener">
+        <span class="built-name">Portfolio v1</span>
+        <span class="built-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M9 6h9v9"/></svg></span>
+        <span class="built-desc">With a 3D neural web background, because why not.</span>
+        <span class="ext">arslanpro.vercel.app</span>
+      </a>
+      <a class="built-row" href="https://horrergame.vercel.app" target="_blank" rel="noopener">
+        <span class="built-name">Horror games ×2</span>
+        <span class="built-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M9 6h9v9"/></svg></span>
+        <span class="built-desc">Playable browser games with inventory and controls.</span>
+        <span class="ext">horrergame.vercel.app</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= FINAL STOP — THE DOOR ================= -->
+  <section class="door" id="door" data-hud="BOOK THE FREE CHECKUP" aria-label="Book a free checkup">
+    <div>
+      <h2 class="display rv">This is where <em>you</em> get on the route.</h2>
+      <p class="lede rv">
+        Tell me your business and what's annoying you. I'll reply personally, usually the same day,
+        and we set up your <strong>free checkup visit</strong>. No spam, ever. One email from me, that's it.
+      </p>
+      <p class="lede rv" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-40);margin-top:30px">
+        Prefer email? <a href="mailto:arslansohail039@gmail.com" style="color:var(--ink)">arslansohail039@gmail.com</a>
+      </p>
+    </div>
+
+    <div class="form-card rv">
+      <form id="checkup-form" novalidate>
+        <div class="field-2">
+          <div class="field">
+            <label for="f-name">Your name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Who I'm meeting" required>
+          </div>
+          <div class="field">
+            <label for="f-biz">Business &amp; area</label>
+            <input id="f-biz" name="business" type="text" autocomplete="organization" placeholder="e.g. Café on St. Mary's" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-contact">Email or phone</label>
+          <input id="f-contact" name="contact" type="text" autocomplete="email" placeholder="Where I reply" required>
+        </div>
+        <div class="field">
+          <label for="f-msg">What's slowing you down? <span aria-hidden="true" style="text-transform:none;letter-spacing:0">(optional)</span></label>
+          <textarea id="f-msg" name="message" placeholder="Paper bookings, slow Wi-Fi, no website, paperwork… whatever annoys you most."></textarea>
+        </div>
+        <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="btn btn-primary magnetic" type="submit" id="submit-btn" style="width:100%;justify-content:center">
+          Book my FREE checkup
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg>
+        </button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+      </form>
+      <div class="booked" id="booked">
+        <span class="stamp">Booked ✓</span>
+        <p>Got it. I'll reply to you personally — usually the same day.<br><strong>Check your inbox for "Arslan · Winnipeg".</strong></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-hud="ROUTE COMPLETE">
+  <div class="foot-grid">
+    <div>
+      <p class="foot-big">ARSLAN <span>SOHAIL</span><br>WINNIPEG'S TECH GUY</p>
+      <div class="legend" aria-hidden="true">
+        <svg viewBox="0 0 60 24"><path d="M2 18 C 14 18 14 8 28 8 S 50 16 58 10" fill="none" stroke="#141412" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/></svg>
+        <span>One kid · One route · Free first visit</span>
+      </div>
+    </div>
+    <div class="foot-mono">
+      <a href="mailto:arslansohail039@gmail.com">arslansohail039@gmail.com</a><br>
+      Winnipeg, Manitoba · Canada<br>
+      Part of <a href="https://nextagent.site" target="_blank" rel="noopener">NextAgent</a>, my AI agency<br>
+      © <span id="year">2026</span> Arslan Sohail
+    </div>
+  </div>
+</footer>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<script>
+(function(){
+  "use strict";
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function(s){ return document.querySelector(s); };
+  var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  /* ---------- year ---------- */
+  $("#year").textContent = new Date().getFullYear();
+
+  /* ---------- hero intro beats ---------- */
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    document.body.classList.add("loaded");
+  });});
+
+  /* ---------- marquees ---------- */
+  var types1 = ["RESTAURANTS","CLINICS","SALONS","GYMS","CAFÉS","AUTO SHOPS"];
+  var types2 = ["BAKERIES","BARBERS","DENTISTS","RETAIL","BREWERY TAPROOMS","PHARMACIES"];
+  var diamond = '<svg viewBox="0 0 12 12" aria-hidden="true"><rect x="2.6" y="2.6" width="6.8" height="6.8" transform="rotate(45 6 6)"/></svg>';
+  function fillMq(id, items){
+    var el = document.getElementById(id);
+    var html = "";
+    for (var rep=0; rep<4; rep++){
+      items.forEach(function(t){ html += '<span class="marquee-item">' + t + diamond + "</span>"; });
+    }
+    el.innerHTML = html;
+  }
+  fillMq("mq1", types1); fillMq("mq2", types2);
+
+  /* ---------- reveal on scroll ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, {threshold:.12, rootMargin:"0px 0px -6% 0px"});
+  $$(".rv").forEach(function(el){ io.observe(el); });
+
+  /* ---------- pin drops ---------- */
+  var pio = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add("pin-drop"); pio.unobserve(e.target); }
+    });
+  }, {threshold:.6});
+  $$(".hero-pin").forEach(function(el){ pio.observe(el); });
+
+  /* ---------- the ROUTE : one line through the whole page ---------- */
+  var path = $("#route-path"), ghost = $("#route-ghost"), svg = $("#route-svg");
+  var pathLen = 0, introP = 0, introStart = null;
+
+  function buildRoute(){
+    var w = window.innerWidth;
+    /* height from real content end (footer bottom), never from scrollHeight:
+       the svg's own extent would otherwise inflate the document and itself */
+    var footR = document.querySelector("footer").getBoundingClientRect();
+    var h = Math.max(footR.bottom + window.scrollY + 24, window.innerHeight);
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    svg.setAttribute("width", w); svg.setAttribute("height", h);
+    svg.style.height = h + "px";
+    svg.style.width = "100%";
+
+    var heroMap = document.querySelector(".hero-map");
+    var heroR = heroMap.getBoundingClientRect();
+    var startY = heroR.top + window.scrollY + heroR.height * 0.4;
+
+    var nodes = $$(".stop, .door").map(function(sec, i){
+      var r = sec.getBoundingClientRect();
+      return { y: r.top + window.scrollY + Math.min(r.height * .28, 340), side: i % 2 === 0 };
+    });
+
+    var pts = [{x: w * 0.5, y: startY}];
+    nodes.forEach(function(n, i){
+      pts.push({ x: n.side ? w * 0.86 : w * 0.14, y: n.y });
+    });
+    var foot = document.querySelector("footer").getBoundingClientRect();
+    pts.push({ x: w * 0.5, y: foot.top + window.scrollY + 30 });
+
+    var d = "M " + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
+    for (var i = 1; i < pts.length; i++){
+      var p0 = pts[i-1], p1 = pts[i];
+      var dy = (p1.y - p0.y) * 0.55;
+      d += " C " + p0.x.toFixed(1) + " " + (p0.y + dy).toFixed(1) + ", "
+                + p1.x.toFixed(1) + " " + (p1.y - dy).toFixed(1) + ", "
+                + p1.x.toFixed(1) + " " + p1.y.toFixed(1);
+    }
+    path.setAttribute("d", d); ghost.setAttribute("d", d);
+    pathLen = path.getTotalLength();
+    path.style.strokeDasharray = "10 12";
+    ghost.style.strokeDasharray = "10 12";
+    updateRoute();
+  }
+
+  var kmTotal = 8.4;
+  function updateRoute(){
+    if (!pathLen || reduced) return;
+    var vh = window.innerHeight;
+    var rect = svg.getBoundingClientRect();
+    var routeBottom = rect.height;
+    var head = window.scrollY + vh * 0.72;
+    var scrollP = Math.max(0, Math.min(1, head / routeBottom));
+    var p = Math.max(introP * 0.10, scrollP);
+    path.style.strokeDashoffset = String(pathLen * (1 - p));
+    /* HUD */
+    var kmEl = $("#hud-km"), nextEl = $("#hud-next");
+    kmEl.textContent = "KM " + (p * kmTotal).toFixed(1);
+    var next = "START";
+    var stops = $$("[data-hud]");
+    for (var i = 0; i < stops.length; i++){
+      var r = stops[i].getBoundingClientRect();
+      if (r.top > vh * 0.5){ next = stops[i].getAttribute("data-hud"); break; }
+      if (r.top <= vh * 0.5) next = stops[i].getAttribute("data-hud");
+    }
+    nextEl.textContent = (p >= 0.99) ? "ROUTE COMPLETE — LAST STOP: YOU" : "NEXT STOP — " + next;
+  }
+
+  function intro(ts){
+    if (!introStart) introStart = ts;
+    introP = Math.min(1, (ts - introStart) / 1400);
+    updateRoute();
+    if (introP < 1) requestAnimationFrame(intro);
+  }
+
+  var ticking = false;
+  window.addEventListener("scroll", function(){
+    if (!ticking){
+      requestAnimationFrame(function(){ updateRoute(); ticking = false; });
+      ticking = true;
+    }
+  }, {passive:true});
+  window.addEventListener("resize", buildRoute);
+  window.addEventListener("load", function(){
+    buildRoute();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildRoute);
+    if (!reduced) requestAnimationFrame(intro);
+  });
+  buildRoute();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildRoute);
+  /* rebuild whenever the document's height changes (fonts, images, reflow) */
+  var lastH = -1, roTimer = null;
+  if ("ResizeObserver" in window){
+    var ro = new ResizeObserver(function(){
+      var h = document.querySelector("footer").getBoundingClientRect().bottom + window.scrollY + 24;
+      if (h !== lastH){
+        lastH = h;
+        clearTimeout(roTimer);
+        roTimer = setTimeout(buildRoute, 120);
+      }
+    });
+    ro.observe(document.body);
+  }
+
+  /* ---------- hero route dot travels ---------- */
+  var heroPath = $("#hero-route"), heroDot = $("#hero-dash-dot");
+  if (heroPath && !reduced){
+    var hpLen = heroPath.getTotalLength();
+    var hpStart = null;
+    function heroAnim(ts){
+      if (!hpStart) hpStart = ts;
+      var t = ((ts - hpStart) / 6000) % 1;
+      var pt = heroPath.getPointAtLength(hpLen * t);
+      heroDot.setAttribute("cx", pt.x); heroDot.setAttribute("cy", pt.y);
+      requestAnimationFrame(heroAnim);
+    }
+    requestAnimationFrame(heroAnim);
+  } else if (heroPath){
+    heroDot.style.display = "none";
+  }
+
+  /* ---------- work order checks (world-true state) ---------- */
+  $$(".wo-row").forEach(function(row){
+    row.addEventListener("mouseenter", function(){ row.classList.add("inview"); }, {once:true});
+  });
+
+  /* ---------- custom cursor + magnetic buttons (desktop) ---------- */
+  if (matchMedia("(pointer:fine)").matches && !reduced){
+    var dot = $(".cursor-dot"), ring = $(".cursor-ring");
+    var mx = innerWidth/2, my = innerHeight/2, rx = mx, ry = my;
+    document.addEventListener("mousemove", function(e){
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + "px"; dot.style.top = my + "px";
+    }, {passive:true});
+    (function ringLoop(){
+      rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
+      ring.style.left = rx + "px"; ring.style.top = ry + "px";
+      requestAnimationFrame(ringLoop);
+    })();
+    $$("a, button, .wo-row, .vstep").forEach(function(el){
+      el.addEventListener("mouseenter", function(){ document.body.classList.add("cursor-hover"); });
+      el.addEventListener("mouseleave", function(){ document.body.classList.remove("cursor-hover"); });
+    });
+    $$(".magnetic").forEach(function(btn){
+      btn.addEventListener("mousemove", function(e){
+        var r = btn.getBoundingClientRect();
+        var x = (e.clientX - r.left - r.width/2) * 0.18;
+        var y = (e.clientY - r.top - r.height/2) * 0.28;
+        btn.style.transform = "translate(" + x + "px," + y + "px)";
+      });
+      btn.addEventListener("mouseleave", function(){ btn.style.transform = ""; });
+    });
+  }
+
+  /* ---------- free checkup form (FormSubmit, free tier) ---------- */
+  var form = $("#checkup-form"), status = $("#form-status"), btn = $("#submit-btn"), booked = $("#booked");
+  function showStatus(msg, ok){
+    status.textContent = msg;
+    status.className = "form-status " + (ok ? "ok" : "err");
+  }
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = form.name.value.trim(), biz = form.business.value.trim(),
+        contact = form.contact.value.trim();
+    if (!name || !biz || !contact){
+      showStatus("I need your name, your business, and somewhere to reply — fill those in and I've got you.", false);
+      return;
+    }
+    var honey = form.querySelector("input[name='_honey']").value;
+    if (honey){ return; } /* bot trap: pretend nothing happened */
+    btn.disabled = true;
+    var original = btn.innerHTML;
+    btn.textContent = "Sending…";
+    fetch("https://formsubmit.co/ajax/arslansohail039@gmail.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        name: name, business: biz, contact: contact,
+        message: form.message.value.trim(),
+        _subject: "Free tech checkup — " + biz,
+        _template: "table",
+        _captcha: "false"
+      })
+    }).then(function(res){
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      form.style.display = "none";
+      booked.classList.add("show");
+    }).catch(function(){
+      btn.disabled = false;
+      btn.innerHTML = original;
+      showStatus("That didn't send — the form service hiccuped. Email me directly at arslansohail039@gmail.com and I'll reply fast.", false);
+    });
+  });
+})();
+</script>
+</body>
+</html>
