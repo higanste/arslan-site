@@ -8,7 +8,13 @@
 <meta property="og:title" content="Arslan — the tech guy who comes to you">
 <meta property="og:description" content="Winnipeg businesses: I visit, I look at how you work, I make the boring tech parts run themselves. First visit free.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://arslan-site.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Arslan — your business has a tech guy. He comes to you. Winnipeg's 16-year-old tech guy; first visit free.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#FBFAF7">
+<script>document.documentElement.classList.add("js");</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2C10 2 5 7 5 13c0 8 11 17 11 17s11-9 11-17c0-6-5-11-11-11z' fill='%23FF4B0A'/%3E%3Ccircle cx='16' cy='13' r='4.5' fill='%23FBFAF7'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,7 +93,7 @@ a{color:inherit}
 
 /* ============ HUD READOUT ============ */
 #hud{
-  position:fixed;left:clamp(12px,2vw,28px);bottom:clamp(12px,2vw,24px);z-index:50;
+  position:fixed;left:calc(clamp(12px,2vw,28px) + env(safe-area-inset-left, 0px));bottom:calc(clamp(12px,2vw,24px) + env(safe-area-inset-bottom, 0px));z-index:50;
   font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;
   background:var(--ink);color:var(--paper);
   padding:9px 13px;border-radius:10px;
@@ -129,13 +135,13 @@ nav a.cta-mini:hover{background:var(--ink);color:var(--paper)}
 .hero-beats{position:relative;z-index:3}
 .beat{
   font-family:var(--font-display);font-weight:900;
-  font-size:clamp(3.2rem, 11vw, 6.4rem);
+  font-size:clamp(2.3rem, 10.6vw, 6.4rem);
   line-height:.92;letter-spacing:.005em;text-transform:uppercase;
-  display:block;width:fit-content;
+  display:block;width:fit-content;white-space:nowrap;
 }
 .beat:nth-child(2){margin-left:clamp(0px,6vw,90px)}
-.beat:nth-child(3){color:var(--action);margin-left:clamp(0px,12vw,180px)}
-.beat-reveal{opacity:0;transform:translateY(24px)}
+.beat:nth-child(3){color:var(--action);margin-left:clamp(0px,8vw,180px)}
+.js .beat-reveal{opacity:0;transform:translateY(24px)}
 .loaded .beat-reveal{animation:beatIn .55s var(--ease-out) forwards}
 @keyframes beatIn{to{opacity:1;transform:none}}
 .jitter-line{position:relative;display:inline-block}
@@ -232,7 +238,7 @@ main{position:relative;z-index:2}
   background:var(--paper);white-space:nowrap;
 }
 .stop-plaque svg{width:11px;height:11px}
-.stop-km{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--ink-40)}
+.stop-km{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--ink-60)}
 .display{
   font-family:var(--font-display);font-weight:900;text-transform:uppercase;
   font-size:clamp(2.6rem,6.4vw,4.6rem);line-height:.96;letter-spacing:.005em;
@@ -243,8 +249,8 @@ main{position:relative;z-index:2}
 .lede strong{color:var(--ink)}
 
 /* reveal system */
-.rv{opacity:0;transform:translateY(28px)}
-.rv.in{opacity:1;transform:none;transition:opacity .7s var(--ease-out), transform .7s var(--ease-out)}
+.js .rv{opacity:0;transform:translateY(28px)}
+.js .rv.in{opacity:1;transform:none;transition:opacity .7s var(--ease-out), transform .7s var(--ease-out)}
 
 /* STOP 1 — WHO */
 .who-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:clamp(30px,5vw,70px);align-items:start}
@@ -303,7 +309,7 @@ main{position:relative;z-index:2}
 .vstep:hover .vstep-num{color:var(--action)}
 .vstep h3{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,2.8vw,38px);text-transform:uppercase;line-height:1.02}
 .vstep p{color:var(--ink-60);margin-top:10px;max-width:56ch;font-size:15.5px}
-.vstep .vmono{font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;color:var(--ink-40);margin-top:12px;display:block}
+.vstep .vmono{font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;color:var(--ink-60);margin-top:12px;display:block}
 
 /* STOP 4 — BUILT */
 .built-list{border-top:1.5px solid var(--ink)}
@@ -324,7 +330,7 @@ main{position:relative;z-index:2}
 .built-arrow{grid-column:2;grid-row:1/3;align-self:center}
 .built-arrow svg{width:22px;height:22px;transition:transform .25s var(--ease-out)}
 .built-row:hover .built-arrow svg{transform:translate(4px,-4px)}
-.built-row .ext{grid-column:2;grid-row:2;font-family:var(--font-mono);font-size:11px;color:var(--ink-40);letter-spacing:.05em;text-align:right}
+.built-row .ext{grid-column:2;grid-row:2;font-family:var(--font-mono);font-size:11px;color:var(--ink-60);letter-spacing:.05em;text-align:right}
 
 /* ============ FINAL STOP — THE DOOR ============ */
 .door{
@@ -354,7 +360,7 @@ main{position:relative;z-index:2}
   background:var(--paper-2);border:1.5px solid transparent;border-radius:12px;
   padding:14px 16px;transition:border .2s, background .2s;
 }
-.field input::placeholder,.field textarea::placeholder{color:var(--ink-40)}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-60)}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--action);background:#fff}
 .field textarea{min-height:110px;resize:vertical}
 .field-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -395,9 +401,10 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   html{scroll-behavior:auto}
-  .rv{opacity:1;transform:none}
+  .rv,.beat-reveal{opacity:1;transform:none}
   #route-path{stroke-dashoffset:0 !important}
   .marquee{animation:none}
+  .cursor-dot,.cursor-ring{display:none}
 }
 </style>
 </head>
@@ -430,7 +437,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
   <span id="hud-next">NEXT STOP — START</span>
 </div>
 
-<header>
+<header style="padding-left:calc(var(--pad) + env(safe-area-inset-left));padding-right:calc(var(--pad) + env(safe-area-inset-right))">
   <a class="wordmark" href="#top">ARSLAN <small>WINNIPEG · MB</small></a>
   <nav aria-label="Main">
     <a href="#who">Who</a>
@@ -445,11 +452,11 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
 
   <!-- ================= HERO ================= -->
   <section class="hero" aria-label="Introduction">
-    <div class="hero-beats" aria-hidden="false">
+    <h1 class="hero-beats" aria-hidden="false">
       <span class="beat beat-reveal" style="animation-delay:.1s">YOUR BUSINESS.</span>
       <span class="beat beat-reveal" style="animation-delay:.35s"><span class="jitter-line">HAS A TECH GUY.</span></span>
       <span class="beat beat-reveal" style="animation-delay:.6s">HE COMES TO YOU.</span>
-    </div>
+    </h1>
     <p class="hero-sub beat-reveal" style="animation-delay:.85s">
       I'm <strong>Arslan</strong> — 16, from Winnipeg. I visit local shops, restaurants and clinics,
       watch how you actually work, and make the boring tech parts run themselves.
@@ -464,7 +471,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
     </div>
 
     <div class="hero-map" aria-hidden="true">
-      <span class="hero-km">ROUTE ARSLAN → YOU · <b id="hero-km">6.4 KM</b></span>
+      <span class="hero-km">ROUTE ARSLAN → YOU · <b id="hero-km">8.4 KM</b></span>
       <svg viewBox="0 0 800 220" preserveAspectRatio="xMidYMid slice">
         <path id="hero-route" d="M 60 168 C 190 168 190 64 320 64 S 520 150 640 118 S 740 96 760 88"
               fill="none" stroke="#141412" stroke-width="3" stroke-dasharray="10 12" stroke-linecap="round"/>
@@ -504,7 +511,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
       <div>
         <h2 class="display rv">Hey — I'm the kid who fixes the <em>tech</em> so you can run the business.</h2>
         <p class="lede rv">
-          I'm Arslan. I'm 16, I live in Winnipeg, and I've been building software since I was 12:
+          I'm Arslan. I'm 16, I live in Winnipeg, and I've been shipping software for years:
           <strong>over 10 finished projects</strong>, from AI tools to full websites.
           Now I bring that to the businesses on my street. You know the ones: the Wi-Fi drops,
           the bookings live on paper, and nobody has time for "digital transformation."
@@ -514,15 +521,17 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
           and tell you plainly what's slowing you down, and what it would take to fix it.
         </p>
       </div>
-      <dl class="fact-card rv">
+      <div class="fact-card rv">
         <h3>Route manifest · ARSLAN</h3>
+        <dl class="fact-rows">
         <div class="fact-row"><dt>Base</dt><dd>Winnipeg, MB</dd></div>
         <div class="fact-row"><dt>Age</dt><dd>16 <em>&amp; shipping</em></dd></div>
         <div class="fact-row"><dt>Projects built</dt><dd>10+</dd></div>
         <div class="fact-row"><dt>Speaks</dt><dd>Human, not jargon</dd></div>
         <div class="fact-row"><dt>First visit</dt><dd><em>FREE</em></dd></div>
+        </dl>
         <p class="signature">ARSLAN <span>SOHAIL</span></p>
-      </dl>
+      </div>
     </div>
   </section>
 
@@ -683,7 +692,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
         Tell me your business and what's annoying you. I'll reply personally, usually the same day,
         and we set up your <strong>free checkup visit</strong>. No spam, ever. One email from me, that's it.
       </p>
-      <p class="lede rv" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-40);margin-top:30px">
+      <p class="lede rv" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-60);margin-top:30px">
         Prefer email? <a href="mailto:arslansohail039@gmail.com" style="color:var(--ink)">arslansohail039@gmail.com</a>
       </p>
     </div>
@@ -839,10 +848,10 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
   function updateRoute(){
     if (!pathLen || reduced) return;
     var vh = window.innerHeight;
-    var rect = svg.getBoundingClientRect();
-    var routeBottom = rect.height;
     var head = window.scrollY + vh * 0.72;
-    var scrollP = Math.max(0, Math.min(1, head / routeBottom));
+    /* completion anchored at the footer's top edge so KM 8.4 is reachable */
+    var footDoc = document.querySelector("footer").getBoundingClientRect().top + window.scrollY;
+    var scrollP = Math.max(0, Math.min(1, head / Math.max(footDoc, 1)));
     var p = Math.max(introP * 0.10, scrollP);
     path.style.strokeDashoffset = String(pathLen * (1 - p));
     /* HUD */
@@ -952,13 +961,14 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
   }
   form.addEventListener("submit", function(e){
     e.preventDefault();
-    var name = form.name.value.trim(), biz = form.business.value.trim(),
-        contact = form.contact.value.trim();
+    var els = form.elements;
+    var name = els.name.value.trim(), biz = els.business.value.trim(),
+        contact = els.contact.value.trim();
     if (!name || !biz || !contact){
       showStatus("I need your name, your business, and somewhere to reply — fill those in and I've got you.", false);
       return;
     }
-    var honey = form.querySelector("input[name='_honey']").value;
+    var honey = els["_honey"].value;
     if (honey){ return; } /* bot trap: pretend nothing happened */
     btn.disabled = true;
     var original = btn.innerHTML;
@@ -968,7 +978,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify({
         name: name, business: biz, contact: contact,
-        message: form.message.value.trim(),
+        message: els.message.value.trim(),
         _subject: "Free tech checkup — " + biz,
         _template: "table",
         _captcha: "false"
