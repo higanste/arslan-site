@@ -163,14 +163,14 @@ nav a.cta-mini:hover{background:var(--ink);color:var(--paper)}
 .beat:nth-child(2){margin-left:clamp(0px,6vw,90px)}
 .beat:nth-child(3){color:var(--action);margin-left:clamp(0px,8vw,180px)}
 .js .beat-reveal{opacity:0;transform:translateY(24px)}
-.loaded .beat-reveal{animation:beatIn .55s var(--ease-out) forwards}
+.loaded .beat-reveal{animation:beatIn .4s var(--ease-out) forwards}
 @keyframes beatIn{to{opacity:1;transform:none}}
 .jitter-line{position:relative;display:inline-block}
 .jitter-line::after{
   content:"";position:absolute;left:0;right:0;bottom:.05em;height:.045em;
   background:var(--ink);opacity:0;
 }
-.loaded .jitter-line::after{animation:jit 2.2s steps(2) infinite .9s}
+.loaded .jitter-line::after{animation:jit 1.6s steps(2) infinite .7s}
 @keyframes jit{
   0%{opacity:1;transform:translateX(0) scaleX(1)}
   25%{opacity:1;transform:translateX(1.5px) scaleX(.985)}
@@ -219,7 +219,7 @@ nav a.cta-mini:hover{background:var(--ink);color:var(--paper)}
 .pin .tag.you{background:var(--action);color:var(--ink)}
 .pin .head{width:22px;height:22px}
 .pin .head .body{transform-origin:50% 100%}
-.pin-drop .head .body{animation:pinDrop .5s var(--ease-out) both}
+.pin-drop .head .body{animation:pinDrop .38s var(--ease-out) both}
 @keyframes pinDrop{
   0%{transform:translateY(-18px);opacity:0}
   60%{transform:translateY(2px);opacity:1}
@@ -237,8 +237,8 @@ nav a.cta-mini:hover{background:var(--ink);color:var(--paper)}
   border-top:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);
   background:var(--paper);overflow:hidden;padding:0;
 }
-.marquee{display:flex;width:max-content;animation:slide 26s linear infinite}
-.marquee.rev{animation-direction:reverse;animation-duration:34s}
+.marquee{display:flex;width:max-content;animation:slide 18s linear infinite}
+.marquee.rev{animation-direction:reverse;animation-duration:24s}
 .marquee-band:hover .marquee{animation-play-state:paused}
 @keyframes slide{to{transform:translateX(-50%)}}
 .marquee-item{
@@ -271,7 +271,7 @@ main{position:relative;z-index:2}
 
 /* reveal system */
 .js .rv{opacity:0;transform:translateY(28px)}
-.js .rv.in{opacity:1;transform:none;transition:opacity .7s var(--ease-out), transform .7s var(--ease-out)}
+.js .rv.in{opacity:1;transform:none;transition:opacity .45s var(--ease-out), transform .45s var(--ease-out)}
 
 /* STOP 1 — WHO */
 .who-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:clamp(30px,5vw,70px);align-items:start}
@@ -475,16 +475,16 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
   <!-- ================= HERO ================= -->
   <section class="hero" aria-label="Introduction">
     <h1 class="hero-beats" aria-hidden="false">
-      <span class="beat beat-reveal" style="animation-delay:.1s">YOUR BUSINESS.</span>
-      <span class="beat beat-reveal" style="animation-delay:.35s"><span class="jitter-line">HAS NEXTAGENT.</span></span>
-      <span class="beat beat-reveal" style="animation-delay:.6s">WE COME TO YOU.</span>
+      <span class="beat beat-reveal" style="animation-delay:.08s">YOUR BUSINESS.</span>
+      <span class="beat beat-reveal" style="animation-delay:.26s"><span class="jitter-line">HAS NEXTAGENT.</span></span>
+      <span class="beat beat-reveal" style="animation-delay:.44s">WE COME TO YOU.</span>
     </h1>
-    <p class="hero-sub beat-reveal" style="animation-delay:.85s">
+    <p class="hero-sub beat-reveal" style="animation-delay:.62s">
       I'm <strong>Arslan</strong>. I run <strong>NextAgent</strong>, a small AI agency in Winnipeg.
       We come to your shop, see what's slowing you down, and fix it with simple tech.
       <strong>First visit free.</strong>
     </p>
-    <div class="hero-ctas beat-reveal" style="animation-delay:1s">
+    <div class="hero-ctas beat-reveal" style="animation-delay:.74s">
       <a class="btn btn-primary magnetic" href="#door">
         Book a FREE tech checkup
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 2v9M4 8l4 4 4-4M2 14h12"/></svg>
@@ -759,8 +759,8 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
     </div>
     <div class="foot-mono">
       <a href="mailto:arslansohail039@gmail.com">arslansohail039@gmail.com</a><br>
-      Winnipeg, Manitoba · Canada<br>
-      A service by <a href="https://nextagent.site" target="_blank" rel="noopener">NextAgent</a>, Winnipeg AI agency<br>
+      Serving Winnipeg &amp; area<br>
+      A service by <a href="https://nextagent.site" target="_blank" rel="noopener">NextAgent</a> — we come to you<br>
       © <span id="year">2026</span> Arslan Sohail
     </div>
   </div>
@@ -885,7 +885,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
 
   function intro(ts){
     if (!introStart) introStart = ts;
-    introP = Math.min(1, (ts - introStart) / 1400);
+    introP = Math.min(1, (ts - introStart) / 1100);
     updateRoute();
     if (introP < 1) requestAnimationFrame(intro);
   }
