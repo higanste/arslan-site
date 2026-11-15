@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Arslan — The Tech Guy for Winnipeg Businesses · Free Tech Checkup</title>
-<meta name="description" content="Arslan is a 16-year-old builder from Winnipeg who visits local businesses, sees how you actually work, and makes the tech parts run themselves. AI, automation, websites. First visit is free.">
-<meta property="og:title" content="Arslan — the tech guy who comes to you">
-<meta property="og:description" content="Winnipeg businesses: I visit, I look at how you work, I make the boring tech parts run themselves. First visit free.">
+<title>NextAgent — The Tech Team for Winnipeg Businesses · Free Tech Checkup</title>
+<meta name="description" content="NextAgent is a Winnipeg AI agency led by Arslan. We visit local businesses, see how you actually work, and make the tech parts run themselves. AI, automation, websites. First visit is free.">
+<meta property="og:title" content="NextAgent — the tech team that comes to you">
+<meta property="og:description" content="Winnipeg businesses: we visit, we look at how you work, we make the boring tech parts run themselves. First visit free.">
+<meta property="og:site_name" content="NextAgent">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://arslan-site.vercel.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Arslan — your business has a tech guy. He comes to you. Winnipeg's 16-year-old tech guy; first visit free.">
+<meta property="og:image:alt" content="NextAgent — your business has a tech team. We come to you. Winnipeg's AI agency for local businesses; first visit free.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#FBFAF7">
 <script>document.documentElement.classList.add("js");</script>
@@ -22,23 +23,43 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Arslan Sohail",
-  "email": "mailto:arslansohail039@gmail.com",
-  "jobTitle": "Tech & AI helper for local businesses",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Winnipeg",
-    "addressRegion": "MB",
-    "addressCountry": "CA"
-  },
-  "knowsAbout": ["AI automation", "small business websites", "business process automation"],
-  "makesOffer": {
-    "@type": "Offer",
-    "name": "Free tech checkup for local businesses",
-    "price": "0",
-    "priceCurrency": "CAD"
-  }
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "#nextagent",
+      "name": "NextAgent",
+      "url": "https://nextagent.site",
+      "slogan": "Winnipeg's tech team for local businesses",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Winnipeg",
+        "addressRegion": "MB",
+        "addressCountry": "CA"
+      },
+      "founder": { "@id": "#arslan" },
+      "makesOffer": {
+        "@type": "Offer",
+        "name": "Free tech checkup for local businesses",
+        "price": "0",
+        "priceCurrency": "CAD"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "#arslan",
+      "name": "Arslan Sohail",
+      "email": "mailto:arslansohail039@gmail.com",
+      "jobTitle": "Founder of NextAgent — tech & AI for local businesses",
+      "worksFor": { "@id": "#nextagent" },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Winnipeg",
+        "addressRegion": "MB",
+        "addressCountry": "CA"
+      },
+      "knowsAbout": ["AI automation", "small business websites", "business process automation"]
+    }
+  ]
 }
 </script>
 <style>
@@ -438,7 +459,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
 </div>
 
 <header style="padding-left:calc(var(--pad) + env(safe-area-inset-left));padding-right:calc(var(--pad) + env(safe-area-inset-right))">
-  <a class="wordmark" href="#top">ARSLAN <small>WINNIPEG · MB</small></a>
+  <a class="wordmark" href="#top">NEXTAGENT <small>ARSLAN · WINNIPEG · MB</small></a>
   <nav aria-label="Main">
     <a href="#who">Who</a>
     <a href="#fix">What I fix</a>
@@ -454,12 +475,13 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
   <section class="hero" aria-label="Introduction">
     <h1 class="hero-beats" aria-hidden="false">
       <span class="beat beat-reveal" style="animation-delay:.1s">YOUR BUSINESS.</span>
-      <span class="beat beat-reveal" style="animation-delay:.35s"><span class="jitter-line">HAS A TECH GUY.</span></span>
-      <span class="beat beat-reveal" style="animation-delay:.6s">HE COMES TO YOU.</span>
+      <span class="beat beat-reveal" style="animation-delay:.35s"><span class="jitter-line">HAS NEXTAGENT.</span></span>
+      <span class="beat beat-reveal" style="animation-delay:.6s">WE COME TO YOU.</span>
     </h1>
     <p class="hero-sub beat-reveal" style="animation-delay:.85s">
-      I'm <strong>Arslan</strong> — 16, from Winnipeg. I visit local shops, restaurants and clinics,
-      watch how you actually work, and make the boring tech parts run themselves.
+      I'm <strong>Arslan</strong>, founder of <strong>NextAgent</strong> — a small Winnipeg AI agency.
+      We visit local shops, restaurants and clinics, watch how you actually work,
+      and make the boring tech parts run themselves.
       <strong>The first visit is free.</strong>
     </p>
     <div class="hero-ctas beat-reveal" style="animation-delay:1s">
@@ -471,7 +493,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
     </div>
 
     <div class="hero-map" aria-hidden="true">
-      <span class="hero-km">ROUTE ARSLAN → YOU · <b id="hero-km">8.4 KM</b></span>
+      <span class="hero-km">ROUTE NEXTAGENT → YOU · <b id="hero-km">8.4 KM</b></span>
       <svg viewBox="0 0 800 220" preserveAspectRatio="xMidYMid slice">
         <path id="hero-route" d="M 60 168 C 190 168 190 64 320 64 S 520 150 640 118 S 740 96 760 88"
               fill="none" stroke="#141412" stroke-width="3" stroke-dasharray="10 12" stroke-linecap="round"/>
@@ -499,7 +521,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
   </div>
 
   <!-- ================= STOP 1 — WHO ================= -->
-  <section class="stop" id="who" data-hud="WHO IS THIS KID" aria-label="Who I am">
+  <section class="stop" id="who" data-hud="WHO IS NEXTAGENT" aria-label="Who we are">
     <div class="stop-head rv">
       <span class="stop-plaque">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7.5 2 4 5.5 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.5-3.5-8-8-8z" fill="#141412"/><circle cx="12" cy="10" r="3.2" fill="#FBFAF7"/></svg>
@@ -511,18 +533,18 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
       <div>
         <h2 class="display rv">Hey — I'm the kid who fixes the <em>tech</em> so you can run the business.</h2>
         <p class="lede rv">
-          I'm Arslan. I'm 16, I live in Winnipeg, and I've been shipping software for years:
-          <strong>over 10 finished projects</strong>, from AI tools to full websites.
-          Now I bring that to the businesses on my street. You know the ones: the Wi-Fi drops,
+          I'm Arslan, 16, and NextAgent is my agency — a small Winnipeg crew of me and the
+          AI systems I've built. <strong>Over 10 finished projects</strong>, from AI tools to full websites.
+          Now we bring that to the businesses on my street. You know the ones: the Wi-Fi drops,
           the bookings live on paper, and nobody has time for "digital transformation."
         </p>
         <p class="lede rv">
-          I don't talk jargon. I come to <strong>your</strong> place, watch how your day actually runs,
-          and tell you plainly what's slowing you down, and what it would take to fix it.
+          I don't talk jargon. When you book, <strong>I</strong> come to your place, watch how your day actually runs,
+          and tell you plainly what's slowing you down. The rest of the team — the AI side — starts working the moment I'm back at my desk.
         </p>
       </div>
       <div class="fact-card rv">
-        <h3>Route manifest · ARSLAN</h3>
+        <h3>Route manifest · NEXTAGENT</h3>
         <dl class="fact-rows">
         <div class="fact-row"><dt>Base</dt><dd>Winnipeg, MB</dd></div>
         <div class="fact-row"><dt>Age</dt><dd>16 <em>&amp; shipping</em></dd></div>
@@ -637,7 +659,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
       <span class="stop-km">KM 7.1</span>
     </div>
     <h2 class="display rv">Things I've <em>built.</em></h2>
-    <p class="lede rv">All live. All made by one 16-year-old with too many ideas. Click any of them.</p>
+    <p class="lede rv">All live. All built in-house at NextAgent. Click any of them.</p>
     <div class="built-list rv" style="margin-top:clamp(28px,4vh,44px)">
       <a class="built-row" href="https://nextagent.site" target="_blank" rel="noopener">
         <span class="built-name">NextAgent</span>
@@ -726,7 +748,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
       </form>
       <div class="booked" id="booked">
         <span class="stamp">Booked ✓</span>
-        <p>Got it. I'll reply to you personally — usually the same day.<br><strong>Check your inbox for "Arslan · Winnipeg".</strong></p>
+        <p>Got it. I'll reply to you personally — usually the same day.<br><strong>Check your inbox for "NextAgent · Winnipeg".</strong></p>
       </div>
     </div>
   </section>
@@ -735,7 +757,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
 <footer data-hud="ROUTE COMPLETE">
   <div class="foot-grid">
     <div>
-      <p class="foot-big">ARSLAN <span>SOHAIL</span><br>WINNIPEG'S TECH GUY</p>
+      <p class="foot-big">NEXTAGENT<br>WINNIPEG'S <span>TECH TEAM</span></p>
       <div class="legend" aria-hidden="true">
         <svg viewBox="0 0 60 24"><path d="M2 18 C 14 18 14 8 28 8 S 50 16 58 10" fill="none" stroke="#141412" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round"/></svg>
         <span>One kid · One route · Free first visit</span>
@@ -744,7 +766,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
     <div class="foot-mono">
       <a href="mailto:arslansohail039@gmail.com">arslansohail039@gmail.com</a><br>
       Winnipeg, Manitoba · Canada<br>
-      Part of <a href="https://nextagent.site" target="_blank" rel="noopener">NextAgent</a>, my AI agency<br>
+      A service by <a href="https://nextagent.site" target="_blank" rel="noopener">NextAgent</a>, Winnipeg AI agency<br>
       © <span id="year">2026</span> Arslan Sohail
     </div>
   </div>
@@ -979,7 +1001,7 @@ footer{position:relative;z-index:2;border-top:1.5px solid var(--ink);padding:34p
       body: JSON.stringify({
         name: name, business: biz, contact: contact,
         message: els.message.value.trim(),
-        _subject: "Free tech checkup — " + biz,
+        _subject: "NextAgent — free tech checkup — " + biz,
         _template: "table",
         _captcha: "false"
       })
